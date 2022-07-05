@@ -1,0 +1,12 @@
+{
+   "meta":{
+      "pubInterval":"10000"
+   },
+   "ssid":"IoT518",
+   "w_pw":"iot",
+   "edge":"192.168.0.9",
+   "devType":"BlindController",
+   "devId":"LivingBlind3",
+   "token":"passw0rd",
+   "config":"done"
+}
