@@ -4,9 +4,9 @@
    },
    "ssid":"IoT518",
    "w_pw":"iot",
-   "edge":"192.168.0.9",
-   "devType":"BlindController",
-   "devId":"LivingBlind3",
+   "org":"192.168.0.9",
+   "devType":"vDev",
+   "devId":"vValve",
    "token":"passw0rd",
    "config":"done"
 }

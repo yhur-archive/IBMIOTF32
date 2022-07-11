@@ -281,7 +281,8 @@ bool subscribeTopic(const char* topic) {
 
 void initDevice() {
     iotInitDevice();
-    if(!cfg.containsKey("config") || strcmp((const char*)cfg["config"], "done")) {
+    if(!cfg.containsKey("config") || strcmp((const char*)cfg["config"], "done") || !cfg.containsKey("org")) {
+        reset_config();
         iotConfigDevice();
     }
 
