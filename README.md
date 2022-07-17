@@ -54,7 +54,7 @@ void message(char* topic, byte* payload, unsigned int payloadLength) {
 
     // YOUR CODE for meta data synchronization
 
-    } else if (strstr(topic, "/cmd/")) {            // strcmp return 0 if both string matches
+    } else if (strstr(topic, "/cmd/")) {
         handleUserCommand(&root);
     }
 }
