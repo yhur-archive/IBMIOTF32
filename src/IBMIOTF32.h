@@ -381,6 +381,16 @@ void publishError(char *msg) {
     Serial.println(payload);
 }
 
+String ip_resolve(String name){
+    IPAddress ipaddr = IPAddress();
+    if(!ipaddr.fromString(name)) {
+        mdns_init ();
+        name.replace(".local\0", "");
+        ipaddr = MDNS.queryHost(name, 5000);      // 5000 ms
+    }
+    return ipaddr.toString();
+}
+
 void handleIOTCommand(char* topic, JsonDocument* root) {
     JsonObject d = (*root)["d"];
 
@@ -417,7 +427,10 @@ void handleIOTCommand(char* topic, JsonDocument* root) {
                 WiFiClient cli;
                 HTTPUpdate httpUpdate;
 		        Serial.println("firmware upgrading");
-	            const char *fw_server = upgrade["server"];
+
+	            String ota_server = upgrade["server"];
+	            char fw_server[20];
+	            sprintf(fw_server, ip_resolve(ota_server).c_str());
 	            int fw_server_port = atoi(upgrade["port"]);
 	            const char *fw_uri = upgrade["uri"];
                 client.publish(infoTopic,"{\"info\":{\"upgrade\":\"Device will be upgraded.\"}}" );
@@ -463,20 +476,9 @@ void set_iot_server() {
         }
     } else {
         String broker = (const char*)cfg["org"];
-        int enLen = broker.indexOf(".local");     // edge name length
-        if (broker.indexOf(".local") > 0 && (broker.length() - enLen == 6)) {
-            mdns_init ();
-            broker.replace(".local","");
-            IPAddress ipaddr = MDNS.queryHost(broker, 5000);      // 5000 ms
-            while (ipaddr == IPAddress(0,0,0,0)) {
-                Serial.printf("Edge server(%s.local) can't be resolved\n", broker.c_str());
-                ipaddr = MDNS.queryHost(broker, 5000);      // 5000 ms
-                delay(5000);
-            }
-            sprintf(iot_server, "%s", ipaddr.toString().c_str());
-        } else {
-            sprintf(iot_server, "%s", broker.c_str());
-        }
+        String ip = ip_resolve(broker);
+        sprintf(iot_server, "%s", ip.c_str());
+
         if (!wifiClient.connect(iot_server, mqttPort)) {
             Serial.println("connection failed");
             return;
@@ -496,4 +498,3 @@ void set_iot_server() {
  *   }
  * };
 */
-
